@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classement — Full-Stack Quest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- BANDEAU TECHNIQUE : Permet de basculer en 1 clic sur l'API du Back à 12h05 -->
+    <div class="dev-banner">
+      <div>
+        <strong>Atelier Implémentation Front</strong> — Contrat reçu : <code>Victor &amp; Rémi</code>
+      </div>
+      <div class="dev-controls">
+        <span id="mode-badge" class="mode-badge badge-mock">Mode : Mock Front</span>
+        <button id="btn-toggle-mode" class="btn-toggle-mode">Passer sur l'API Réelle (Back)</button>
+      </div>
+    </div>
+
+    <!-- BANNIÈRE D'ERREUR STANDARDISÉE (Selon contrat ErrorResponse) -->
+    <div id="error-banner" class="error-banner">
+      <strong>Erreur API :</strong> <span id="error-message"></span>
+    </div>
+
+    <!-- EN-TÊTE : TITRE ET SÉLECTEUR DE PÉRIODE -->
+    <div class="header-bar">
+      <h1 class="title">Classement</h1>
+
+      <div class="tabs">
+        <!-- 
+          Paramètre de contrat : scope='season' ou scope='today'
+          Initialement 'season' est actif conformément au default du contrat 
+        -->
+        <button id="tab-season" class="tab-btn active">Saison</button>
+        <button id="tab-today" class="tab-btn">Aujourd'hui</button>
+      </div>
+    </div>
+
+    <!-- TABLEAU DU CLASSEMENT -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="th-rank">Rang</th>
+            <th class="th-player">Joueur</th>
+            <th class="th-team">Équipe</th>
+            <th class="th-level">Niveau</th>
+            <th class="th-xp">XP</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+          <!-- Les lignes LeaderboardRow seront insérées dynamiquement par app.js -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+/* 
+  Styles de l'écran Classement - Reproduction fidèle de la maquette du Hub.
+  Design "Graph paper" (fond quadrillé millimétré), typographie soignée et palette officielle.
+*/
+
+:root {
+  --bg-color: #f8fafc;
+  --grid-line-color: rgba(203, 213, 225, 0.45);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary-accent: #f59e0b; /* Jaune or */
+  --top3-color: #d97706;     /* Doré pour les rangs 1, 2, 3 */
+  --rank-color: #1e40af;     /* Bleu nuit pour les rangs 4+ */
+  --border-table: #cbd5e1;
+  --header-line: #94a3b8;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-main);
+  background-color: var(--bg-color);
+  /* Fond quadrillé style papier millimétré de la maquette */
+  background-image: 
+    linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+  background-size: 24px 24px;
+  min-height: 100vh;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* --- BANDEAU TECHNIQUE (DEV / MOCK VS RÉEL) --- */
+.dev-banner {
+  background: #ffffff;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dev-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mode-badge {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-mock {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-real {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.btn-toggle-mode {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-toggle-mode:hover {
+  background: #334155;
+}
+
+/* --- HEADER DU CLASSEMENT --- */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0b192c;
+}
+
+/* --- ONGLETS SAISON / AUJOURD'HUI --- */
+.tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.tab-btn {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 4px;
+  border: 1px solid #94a3b8;
+  background: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.tab-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Onglet actif : Fond jaune doré */
+.tab-btn.active {
+  background: #fbbf24;
+  border-color: #d97706;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* --- TABLEAU DU CLASSEMENT --- */
+.table-wrapper {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  padding: 16px 20px;
+  border-bottom: 2px solid #64748b;
+  background: transparent;
+}
+
+td {
+  font-size: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+tbody tr:last-child td {
+  border-bottom: 2px solid #f59e0b;
+}
+
+tbody tr:hover {
+  background-color: rgba(241, 245, 249, 0.6);
+}
+
+/* Colonne Rang */
+.col-rank {
+  width: 80px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--rank-color);
+}
+
+/* Top 3 en couleur or selon la maquette */
+.col-rank.top-3 {
+  color: var(--top3-color);
+}
+
+/* Colonne Joueur */
+.col-player {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Colonne Équipe */
+.col-team {
+  color: #475569;
+}
+
+/* Colonne Niveau */
+.col-level {
+  width: 100px;
+  text-align: center;
+  font-weight: 500;
+}
+
+th.th-level {
+  text-align: center;
+}
+
+/* Colonne XP */
+.col-xp {
+  width: 120px;
+  text-align: right;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+th.th-xp {
+  text-align: right;
+}
+
+/* --- ÉTATS : CHARGEMENT, VIDE, ERREUR --- */
+.state-container {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.state-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: none;
+}

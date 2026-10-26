@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: Hub — Classement
+  version: 0.1.0
+  description: >
+    Contrat de l'écran Classement.
+    À compléter : égalités, joueur sans équipe, pagination, tri, format des erreurs.
+
+paths:
+  /api/v1/classement:
+    get:
+      summary: Classement des joueurs
+      parameters:
+        - name: periode
+          in: query
+          required: true
+          description: Onglet affiché. "saison" ou "aujourd'hui".
+          schema:
+            type: string
+            enum: [saison, aujourd_hui]
+        # TODO pagination : limit ? offset ? cursor ?
+        # TODO tri : paramètre explicite, ou ordre fixe côté serveur ?
+      responses:
+        "200":
+          description: Classement de la période demandée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Classement"
+        # TODO erreurs : 400 (période invalide), 401, 429…
+        # Chaque erreur doit avoir le MÊME format.
+
+components:
+  schemas:
+    Classement:
+      type: object
+      required: [periode, entrees]
+      properties:
+        periode:
+          type: string
+          enum: [saison, aujourd_hui]
+        entrees:
+          type: array
+          items:
+            $ref: "#/components/schemas/EntreeClassement"
+        # TODO pagination : total, page, next… si vous en avez une
+
+    EntreeClassement:
+      type: object
+      # Champs visibles à l'écran. Le doré du top 3 est un choix d'affichage, pas un champ.
+      required: [rang, joueur, niveau, xp]
+      properties:
+        rang:
+          type: integer
+          minimum: 1
+        joueur:
+          type: string
+          minLength: 1
+        # TODO joueur sans équipe : equipe est-il facultatif, ou null ?
+        # À l'écran, l'équipe absente s'affiche "—".
+        equipe:
+          type: string
+        niveau:
+          type: integer
+          minimum: 1
+        xp:
+          type: integer
+          minimum: 0
+      # TODO égalités : deux joueurs au même XP, même rang ou rang suivant ?
+      # TODO à XP égal, quel critère départage (nom, id, date) ?

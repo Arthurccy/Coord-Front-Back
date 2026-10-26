@@ -1,0 +1,175 @@
+openapi: 3.0.3
+info:
+  title: API Classement (Leaderboard) - Full-Stack Quest
+  description: |
+    Contrat d'interface (Rétro-contrat) pour l'écran Classement du Hub.
+    
+    ### Arbitrages & Règles métiers tranchées :
+    1. **Égalités (Ex-æquo)** : 
+       - Pas de rangs partagés : chaque ligne possède un rang entier strictement unique et incrémenté (1, 2, 3...).
+       - En cas d'égalité sur l'XP, le critère de départage est l'ordre alphabétique du pseudo (`pseudo ASC`).
+    2. **Joueurs sans partie (0 XP)** : 
+       - Inclus dans le classement en fin de tableau (avec `xp: 0` et `level: 1`).
+       - Si aucun joueur n'a encore marqué de points dans la promo, le tableau peut être vide (`rows: []`), déclenchant le message d'attente front.
+    3. **Pagination** : 
+       - Pas de pagination côté API ni côté client (v1). L'ensemble des joueurs est retourné en une seule réponse (`rows: [...]`).
+    4. **Tri** : 
+       - Prédéfini et garanti par le Backend : `xp DESC` puis `pseudo ASC`.
+       - Le client affiche la liste telle quelle sans refaire de tri.
+  version: 1.0.0
+
+paths:
+  /api/leaderboard:
+    get:
+      summary: Récupérer le classement des joueurs
+      description: Renvoie la liste ordonnée des joueurs pour la période demandée.
+      parameters:
+        - name: scope
+          in: query
+          required: false
+          description: |
+            Période du classement :
+            - `season` : Cumul sur l'ensemble de la saison / session.
+            - `today` : Points marqués aujourd'hui uniquement.
+          schema:
+            type: string
+            enum:
+              - season
+              - today
+            default: season
+          example: season
+      responses:
+        '200':
+          description: Classement récupéré avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderboardResponse'
+              example:
+                scope: "season"
+                rows:
+                  - rank: 1
+                    id: 6
+                    pseudo: "Ishak MESSAOUDI"
+                    team: null
+                    level: 3
+                    xp: 533
+                  - rank: 2
+                    id: 2
+                    pseudo: "Jérémy"
+                    team: null
+                    level: 3
+                    xp: 496
+                  - rank: 10
+                    id: 1
+                    pseudo: "Dylan"
+                    team: null
+                    level: 1
+                    xp: 0
+        '400':
+          description: Requête invalide (ex: scope inconnu)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: "INVALID_PARAM"
+                  message: "Le paramètre 'scope' doit être 'season' ou 'today'."
+        '401':
+          description: Utilisateur non authentifié (session ou code de classe absent/expiré)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: "UNAUTHENTICATED"
+                  message: "Connecte-toi avec le code de classe"
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: "SERVER_ERROR"
+                  message: "Une erreur inattendue est survenue"
+
+components:
+  schemas:
+    LeaderboardResponse:
+      type: object
+      required:
+        - scope
+        - rows
+      properties:
+        scope:
+          type: string
+          enum: [season, today]
+          description: Période effective appliquée pour ce classement.
+        rows:
+          type: array
+          description: Liste ordonnée des joueurs classés.
+          items:
+            $ref: '#/components/schemas/LeaderboardRow'
+
+    LeaderboardRow:
+      type: object
+      required:
+        - rank
+        - id
+        - pseudo
+        - team
+        - level
+        - xp
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+          description: Position dans le classement (1 pour le premier).
+          example: 1
+        id:
+          type: integer
+          description: Identifiant unique du joueur.
+          example: 6
+        pseudo:
+          type: string
+          description: Nom d'affichage / pseudo du joueur.
+          example: "Ishak MESSAOUDI"
+        team:
+          type: string
+          nullable: true
+          description: Équipe du joueur, ou `null` si aucune équipe assignée.
+          example: null
+        level:
+          type: integer
+          minimum: 1
+          description: Niveau actuel du joueur.
+          example: 3
+        xp:
+          type: integer
+          minimum: 0
+          description: Nombre total de points d'expérience sur la période.
+          example: 533
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Code d'erreur machine lisible en majuscules snake_case.
+              example: "UNAUTHENTICATED"
+            message:
+              type: string
+              description: Message d'erreur explicatif affiché ou loggé.
+              example: "Connecte-toi avec le code de classe"
